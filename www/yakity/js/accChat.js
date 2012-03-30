@@ -33,11 +33,11 @@ var AccChat = Yakity.Chat.extend({
 		this.templates = templates;
 		this.active = undefined;
 		var self = this;
-		this.accordion = new Accordion(document.getElementById(this.target_id), 'a.toggler', 'div.chatwindow', {
-			onActive: function(toggler, element){
-				var chatwin = self.DOMtoWIN.get(toggler);
+		this.accordion = new Accordion('div.header', 'div.chatwindow', {
+			onActive: function(header, element){
+				var chatwin = self.DOMtoWIN.get(header);
 				if (chatwin && self.active != chatwin) {
-					toggler.setStyle('color', '#41464D');
+					UTIL.addClass(header, 'active');
 					self.active = chatwin;
 					chatwin.trigger("focus", chatwin);
 					chatwin.getMessagesNode().style.overflow="auto";
@@ -46,9 +46,9 @@ var AccChat = Yakity.Chat.extend({
 				}
 
 			},
-			onBackground: function(toggler, element){
-				toggler.setStyle('color', '#528CE0');
-				var chatwin = self.DOMtoWIN.get(toggler);
+			onBackground: function(header, element){
+				UTIL.removeClass(header, 'active');
+				var chatwin = self.DOMtoWIN.get(header);
 				if (chatwin) {
 					chatwin.trigger("blur", chatwin);
 					chatwin.getMessagesNode().style.overflow="hidden";
@@ -75,9 +75,9 @@ var AccChat = Yakity.Chat.extend({
 		    this.DOMtoWIN.get(this.accordion.togglers[i]).pos = i;
 		}
 
+		this.DOMtoWIN.remove(win.header);
 		document.getElementById(this.target_id).removeChild(win.header);
 		document.getElementById(this.target_id).removeChild(win.container);
-		this.DOMtoWIN.remove(win.header.firstChild);
 
 		if (win.pos < this.accordion.previous) {
 		    this.accordion.previous--;
@@ -139,7 +139,7 @@ var AccChat = Yakity.Chat.extend({
 		var header = document.createElement("div");
 		var infoicon = document.createElement("div");
 		UTIL.addClass(infoicon, "infoIcon");
-		toggler.appendChild(infoicon);
+		header.appendChild(infoicon);
 
 
 		if (uniform == this.client.uniform) {
@@ -209,7 +209,7 @@ var AccChat = Yakity.Chat.extend({
 		UTIL.addClass(header, "idle");
 		UTIL.addClass(container, "idle");
 		UTIL.addClass(header, "header");
-		this.DOMtoWIN.set(toggler, win);
+		this.DOMtoWIN.set(header, win);
 
 		if (uniform != this.client.uniform) { // not the status window
 			var a;
@@ -253,11 +253,14 @@ var AccChat = Yakity.Chat.extend({
 		UTIL.addClass(win.getMessagesNode(), "messages");
 		container.appendChild(win.getMessagesNode());
 
-
 		var pos = this.accordion.elements.length;
+		header.id = this.target_id + '_header_' + pos;
+		container.id = this.target_id + '_container_' + pos;
 		document.getElementById(this.target_id).appendChild(header);
 		document.getElementById(this.target_id).appendChild(container);
-		this.accordion.addSection(toggler, container, pos);
+
+		/* stupid mootools accepting _only_ IDs for addSection... */
+		this.accordion.addSection(header.id, container.id);
 
 
 		// fixes the flicker bug. dont know why mootools is f*cking with the styles

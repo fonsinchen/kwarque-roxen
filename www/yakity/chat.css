@@ -16,8 +16,8 @@ div._notice_enter span._supplicant, div._notice_leave span._supplicant {
 }
 
 div.status div.messages, div.public div.messages, div.private div.messages {
-	height: 250px;
-	overflow: none;
+	height: 75%;
+	overflow: auto;
 }
 
 div.chatwindow {
@@ -105,6 +105,7 @@ a.toggleInfo, div.infoIcon {
 	height: 24px;
 	line-height: 24px;
 	float:left;
+	background-color:transparent;
 }
 
 a.toggler {
@@ -112,6 +113,12 @@ a.toggler {
 	font-family: 'Andale-Mono', sans-serif;
 	display: block;
 	height: 24px;
+	background-color: transparent;
+	color: #528CE0;
+}
+
+div.header.active, div.header.active a.toggler {
+	color: #41464D;
 }
 
 div.public div.infoIcon {

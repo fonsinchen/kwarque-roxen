@@ -65,37 +65,7 @@ XSS.html_string_decode = function(s) {
 		case "ugrave": return String.fromChar(217);
 		case "uuml": return String.fromChar(220);
 		case "yacute": return String.fromChar(221);
-		case "aacute": return String.fromChar(225);
-		case "acirc": return String.fromChar(226);
-		case "aelig": return String.fromChar(230);
-		case "agrave": return String.fromChar(224);
-		case "aring": return String.fromChar(229);
-		case "atilde": return String.fromChar(227);
-		case "auml": return String.fromChar(228);
-		case "ccedil": return String.fromChar(231);
-		case "eacute": return String.fromChar(233);
-		case "ecirc": return String.fromChar(234);
-		case "egrave": return String.fromChar(232);
-		case "eth": return String.fromChar(240);
-		case "euml": return String.fromChar(235);
-		case "iacute": return String.fromChar(237);
-		case "icirc": return String.fromChar(238);
-		case "igrave": return String.fromChar(236);
-		case "iuml": return String.fromChar(239);
-		case "ntilde": return String.fromChar(241);
-		case "oacute": return String.fromChar(243);
-		case "ocirc": return String.fromChar(244);
-		case "ograve": return String.fromChar(242);
-		case "oslash": return String.fromChar(248);
-		case "otilde": return String.fromChar(245);
-		case "ouml": return String.fromChar(246);
 		case "szlig": return String.fromChar(223);
-		case "thorn": return String.fromChar(254);
-		case "uacute": return String.fromChar(250);
-		case "ucirc": return String.fromChar(251);
-		case "ugrave": return String.fromChar(249);
-		case "uuml": return String.fromChar(252);
-		case "yacute": return String.fromChar(253);
 		case "yuml": return String.fromChar(255);
 		case "cent": return String.fromChar(162);
 		default:
@@ -111,7 +81,7 @@ XSS.html_string_encode = function(s) {
 	var ret = "";
 
 	for (var i = 0; i < s.length; i++) {
-		var c = s.charCodeAt(i);
+		var c = s.charAt(i);
 
 		switch (c) {
 		case '&': ret += "&amp;"; break;

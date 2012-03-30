@@ -53,8 +53,19 @@ var AccChat = Yakity.Chat.extend({
 					chatwin.trigger("blur", chatwin);
 					chatwin.getMessagesNode().style.overflow="hidden";
 				}
-			}
+			},
 			//opacity : false
+			
+			initialDisplayFx: false, // don't show transition for initial item
+			
+			/* Don't suppress hide/show action on addSection
+			 * The default is "ignore" and that means if an item is inserted
+			 * while some transition is running, the hiding of the new item
+			 * will be suppressed, resulting in two items being shown. This
+			 * will of course happen whenever you batch-insert multiple items.
+			 * Stupid mootools ...
+			 */
+			link: "chain"
 		});
 	},
 	removeWindow : function(uniform) {
@@ -254,8 +265,15 @@ var AccChat = Yakity.Chat.extend({
 		container.appendChild(win.getMessagesNode());
 
 		var pos = this.accordion.elements.length;
+
+		/* Assign some unique IDs to make new item available for addSection() */
 		header.id = this.target_id + '_header_' + pos;
 		container.id = this.target_id + '_container_' + pos;
+		/* mootools expects containers to be initially hidden. Otherwise two items
+		 * are shown.
+		 */
+		container.setStyle('height', '0px');
+
 		document.getElementById(this.target_id).appendChild(header);
 		document.getElementById(this.target_id).appendChild(container);
 
@@ -275,8 +293,8 @@ var AccChat = Yakity.Chat.extend({
 
 		if (!this.active) {
 			this.active = win;
-			this.accordion.display(1);
-			this.accordion.display(pos);
+			this.accordion.display(1, false);
+			this.accordion.display(pos, false);
 		}
 
 		return win;

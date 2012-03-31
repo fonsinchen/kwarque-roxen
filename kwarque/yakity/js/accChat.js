@@ -34,7 +34,7 @@ var AccChat = new Class({
 		this.templates = templates;
 		this.active = undefined;
 		var self = this;
-		this.accordion = new Accordion('div.header', 'div.chatwindow', {
+		this.accordion = new Fx.Accordion('div.header', 'div.chatwindow', {
 			onActive: function(header, element){
 				var chatwin = self.DOMtoWIN.get(header);
 				if (chatwin && self.active != chatwin) {

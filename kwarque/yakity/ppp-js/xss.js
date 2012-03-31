@@ -90,7 +90,7 @@ XSS.html_string_encode = function(s) {
 		case '/': ret += "&#x2f;"; break;
 		case '\'': ret += "&#x27;"; break;
 		case '"': ret += "&quot;"; break;
-		default: ret += String.fromCharCode(c); break;
+		default: ret += c; break;
 		}
 	}
 

@@ -3,7 +3,8 @@
     <head>
     	<title>YakityChat</title>    
     
-        <script src="js/Base.js" type="text/javascript"></script>
+    	<script src="../moo/mootools-core-1.4.5-full-compat.js" type="text/javascript"></script>
+        <script src="../moo/mootools-more-1.4.0.1-compat.js" type="text/javascript"></script>
         <script src="ppp-js/utf8.js" type="text/javascript"></script>
         <script src="ppp-js/util.js" type="text/javascript"></script>
         <script src="ppp-js/mapping.js" type="text/javascript"></script>
@@ -13,8 +14,6 @@
         <script src="ppp-js/mmp.js" type="text/javascript"></script>
         <script src="js/yakity.js" type="text/javascript"></script>
         <script src="js/accChat.js" type="text/javascript"></script>
-        <script src="mootools-1.2.3-core-nc.js" type="text/javascript"></script>
-        <script src="mootools-1-1.2.3.1-more.js" type="text/javascript"></script>
 
 		<script type="text/javascript">
 			var client; 
@@ -120,11 +119,10 @@
 				});
 				profiles = new Yakity.ProfileData(client);
 		
-				var lprofiles = new Yakity.ProfileData(client).extend({
-					getDisplayNode : function(uniform) {
-						return ulink(uniform);
-					}
-				});
+				var lprofiles = new Yakity.ProfileData(client);
+				lprofiles.getDisplayNode = function(uniform) {
+					return ulink(uniform);
+				};
 				
 				
 				userlist = new Yakity.UserList(client, lprofiles);
@@ -134,44 +132,50 @@
                                 userdiv.appendChild(userlist.table.table);
 				document.getElementById("leftPane").appendChild(userdiv);
 
-				var CustomChat = AccChat.extend({
+				var CustomChat = new Class({
+					Extends : AccChat,
 					createWindow : function(uniform) {
-						var win = this.base(uniform);
+						var win = this.parent(uniform);
 						if (uniform.is_room()) {
 							win.renderMember = function(uniform) {
 								return ulink(uniform);
 							}
 						}
-						win.extend({
-							renderMessage : function(p) {
-								var div = this.base(p);
 
-								if (div && p.v("_source_relay") == client.uniform) {
-									UTIL.addClass(div, "self");	
-								}
-								return div;
-							},
-							_notice_presence_typing : function(p) {
-								UTIL.replaceClass(this.header, "idle", "typing");
-								UTIL.replaceClass(this.container, "idle", "typing");
-								return psyc.STOP;
-							},
-							_notice_presence_idle : function(p) {
-								UTIL.replaceClass(this.container, "typing", "idle");
-								UTIL.replaceClass(this.header, "typing", "idle");
-								return psyc.STOP;
-							},
-							_notice_logout : function(p) {
-								UTIL.replaceClass(this.container, "idle", "offline");
-								UTIL.replaceClass(this.header, "idle", "offline");
-								UTIL.replaceClass(this.container, "typing", "offline");
-								UTIL.replaceClass(this.header, "typing", "offline");
-							},
-							_notice_login : function(p) {
-								UTIL.replaceClass(this.container, "offline", "idle");
-								UTIL.replaceClass(this.header, "offline", "idle");
+						/* TODO: solve this with proper inheritance. */
+						win.parent_renderMessage = win.renderMessage;
+						win.renderMessage = function(p) {
+							/* As this method wasn't available when the class
+							 * was created Class()'s "parent" magic was not
+							 * applied.
+							 */
+							var div = win.parent_renderMessage(p);
+
+							if (div && p.v("_source_relay") == client.uniform) {
+								UTIL.addClass(div, "self");	
 							}
-						});
+							return div;
+						};
+						win._notice_presence_typing = function(p) {
+							UTIL.replaceClass(this.header, "idle", "typing");
+							UTIL.replaceClass(this.container, "idle", "typing");
+							return psyc.STOP;
+						};
+						win._notice_presence_idle = function(p) {
+							UTIL.replaceClass(this.container, "typing", "idle");
+							UTIL.replaceClass(this.header, "typing", "idle");
+							return psyc.STOP;
+						};
+						win._notice_logout = function(p) {
+							UTIL.replaceClass(this.container, "idle", "offline");
+							UTIL.replaceClass(this.header, "idle", "offline");
+							UTIL.replaceClass(this.container, "typing", "offline");
+							UTIL.replaceClass(this.header, "typing", "offline");
+						};
+						win._notice_login = function(p) {
+							UTIL.replaceClass(this.container, "offline", "idle");
+							UTIL.replaceClass(this.header, "offline", "idle");
+						};
 						if (bip) win.register_event("new_message", this, function(win, p, node) {
 							if (p.source() == this.client.uniform 
 							    || p.v("_source_relay") == this.client.uniform 

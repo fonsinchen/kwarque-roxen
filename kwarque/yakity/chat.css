@@ -16,8 +16,8 @@ div._notice_enter span._supplicant, div._notice_leave span._supplicant {
 }
 
 div.status div.messages, div.public div.messages, div.private div.messages {
-	height: 75%;
-	overflow: auto;
+	height: 250px;
+	overflow: none;
 }
 
 div.chatwindow {

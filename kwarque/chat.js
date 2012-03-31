@@ -54,52 +54,44 @@ function onconnect(success, uh) {
 	});
 	profiles = new Yakity.ProfileData(client);
 
-	var lprofiles = new Yakity.ProfileData(client).extend({
-		getDisplayNode : function(uniform) {
-			return ulink(uniform);
-		}
-	});
-	
-	
-	var CustomChat = AccChat.extend({
+	var CustomChat = new Class({
+		Extends : AccChat,
 		createWindow : function(uniform) {
-			var win = this.base(uniform);
+			var win = this.parent(uniform);
 			if (uniform.is_room()) {
 				win.renderMember = function(uniform) {
 					return ulink(uniform);
 				}
 			}
-			win.extend({
-				renderMessage : function(p) {
-					var div = this.base(p);
+			win.parent_RenderMessage = win.renderMessage;
+			win.renderMessage = function(p) {
+				var div = win.parent_RenderMessage(p);
 
-					if (div && p.v("_source_relay") == client.uniform) {
-						UTIL.addClass(div, "self");	
-					}
-					return div;
-				},
-				_notice_presence_typing : function(p) {
-					UTIL.replaceClass(this.header, "idle", "typing");
-					UTIL.replaceClass(this.container, "idle", "typing");
-					return psyc.STOP;
-				},
-				_notice_presence_idle : function(p) {
-					UTIL.replaceClass(this.container, "typing", "idle");
-					UTIL.replaceClass(this.header, "typing", "idle");
-					return psyc.STOP;
-				},
-				_notice_logout : function(p) {
-					UTIL.replaceClass(this.container, "idle", "offline");
-					UTIL.replaceClass(this.header, "idle", "offline");
-					UTIL.replaceClass(this.container, "typing", "offline");
-					UTIL.replaceClass(this.header, "typing", "offline");
-				},
-				_notice_login : function(p) {
-					UTIL.replaceClass(this.container, "offline", "idle");
-					UTIL.replaceClass(this.header, "offline", "idle");
+				if (div && p.v("_source_relay") == client.uniform) {
+					UTIL.addClass(div, "self");
 				}
-			});
-
+				return div;
+			};
+			win._notice_presence_typing = function(p) {
+				UTIL.replaceClass(this.header, "idle", "typing");
+				UTIL.replaceClass(this.container, "idle", "typing");
+				return psyc.STOP;
+			};
+			win._notice_presence_idle = function(p) {
+				UTIL.replaceClass(this.container, "typing", "idle");
+				UTIL.replaceClass(this.header, "typing", "idle");
+				return psyc.STOP;
+			};
+			win._notice_logout = function(p) {
+				UTIL.replaceClass(this.container, "idle", "offline");
+				UTIL.replaceClass(this.header, "idle", "offline");
+				UTIL.replaceClass(this.container, "typing", "offline");
+				UTIL.replaceClass(this.header, "typing", "offline");
+			};
+			win._notice_login = function(p) {
+				UTIL.replaceClass(this.container, "offline", "idle");
+				UTIL.replaceClass(this.header, "offline", "idle");
+			};
 			return win;
 		}
 	});

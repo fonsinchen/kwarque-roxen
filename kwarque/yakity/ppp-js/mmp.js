@@ -89,7 +89,7 @@ mmp.Uniform.prototype = {
 		var s2 = a.toString();
 		return (s1 == s2) ? 0 : (s1 > s2) ? 1 : -1;
 	},
-	constructor : mmp.Uniform
+	initialize : mmp.Uniform
 };
 /**
  * Returns the value associated with key or an abbreviation of key.
@@ -192,9 +192,9 @@ mmp.Vars = function() {
     }
 };
 mmp.Vars.prototype = new Mapping();
-mmp.Vars.prototype.constructor = mmp.Vars;
-mmp.Packet = Base.extend({
-	constructor : function(data, vars) {
+mmp.Vars.prototype.intialize = mmp.Vars;
+mmp.Packet = new Class({
+	initialize : function(data, vars) {
 		this.data = data;
 		if (vars instanceof mmp.Vars) {
 			this.vars = vars;

@@ -201,4 +201,4 @@ var TypedTable = function(list) {
 */
 };
 TypedTable.prototype = new Table();
-TypedTable.prototype.constructor = TypedTable;
+TypedTable.prototype.initialize = TypedTable;

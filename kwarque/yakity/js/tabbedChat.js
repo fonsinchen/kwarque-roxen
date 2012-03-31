@@ -27,7 +27,7 @@ psyc.TabbedRoom = function(templates, id) {
 	this.active = null;
 };
 psyc.TabbedRoom.prototype = new psyc.RoomWindow();
-psyc.TabbedRoom.prototype.constructor = psyc.TabbedRoom;
+psyc.TabbedRoom.prototype.initialize = psyc.TabbedRoom;
 psyc.TabbedRoom.prototype.hide = function() {
 	this.li.className = this.li.className.replace("header_shown", "header_hidden");
 	this.container.className = this.container.className.replace("window_shown", "window_hidden");
@@ -47,7 +47,7 @@ psyc.TabbedPrivate = function(templates, id) {
 	this.active = null;
 };
 psyc.TabbedPrivate.prototype = new psyc.TemplatedWindow();
-psyc.TabbedPrivate.prototype.constructor = psyc.TabbedPrivate;
+psyc.TabbedPrivate.prototype.initialize = psyc.TabbedPrivate;
 psyc.TabbedPrivate.prototype.hide = function() {
 	this.li.className = this.li.className.replace(/header_shown/g, "header_hidden");
 	this.container.className = this.container.className.replace(/window_shown/g, "window_hidden");
@@ -56,8 +56,9 @@ psyc.TabbedPrivate.prototype.show = function() {
 	this.li.className = this.li.className.replace(/header_hidden/g, "header_shown");
 	this.container.className = this.container.className.replace(/window_hidden/g, "window_shown");
 };
-psyc.TabbedChat = psyc.Chat.extend({
-	constructor : function(client, templates) {
+psyc.TabbedChat = new Class({
+	Extends : psyc.Chat,
+	initialize : function(client, templates) {
 		psyc.Chat.call(this, client);
 
 		if (!client) return;

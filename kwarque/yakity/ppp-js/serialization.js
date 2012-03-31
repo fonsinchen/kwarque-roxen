@@ -23,8 +23,8 @@ serialization = {};
  * @property {String} type Atom type, e.g. _integer.
  * @property {String} data String representation of the value
  */
-serialization.Atom = Base.extend({
-	constructor : function(type, data) {
+serialization.Atom = new Class({
+	initialize : function(type, data) {
 		this.type = type;
 		this.data = data;
 	},
@@ -46,8 +46,8 @@ serialization.Atom = Base.extend({
  * Atom parser class.
  * @constructor
  */
-serialization.AtomParser = Base.extend({
-	constructor : function() {
+serialization.AtomParser = new Class({
+	initialize : function() {
 		this.buffer = "";
 		this.reset();
 	},
@@ -123,7 +123,7 @@ serialization.AtomParser = Base.extend({
 		return a;
     }
 });
-serialization.Base = Base.extend({
+serialization.Base = new Class({
 	can_decode : function(atom) {
 		return atom.type == this.type; // TODO: inheritance
 	},
@@ -131,8 +131,9 @@ serialization.Base = Base.extend({
 		return "serialization.Base("+this.type+")";
 	}
 });
-serialization.Polymorphic = serialization.Base.extend({
-	constructor: function() {
+serialization.Polymorphic = new Class({
+	Extends : serialization.Base,
+	initialize : function() {
 		this.atype_to_type = new Mapping(); // this could use inheritance
 		this.ptype_to_type = new Mapping();
 	},
@@ -145,7 +146,7 @@ serialization.Polymorphic = serialization.Base.extend({
 	can_encode : function(o) {
 		var t = typeof(o);
 		if (t == "object") {
-			return this.ptype_to_type.hasIndex(o.constructor);
+			return this.ptype_to_type.hasIndex(o.initialize);
 		}
 		return this.ptype_to_type.hasIndex(t);
 	},
@@ -162,7 +163,7 @@ serialization.Polymorphic = serialization.Base.extend({
 	},
 	encode : function(o) {
 		var t = typeof(o);
-		if (t == "object") t = o.constructor;
+		if (t == "object") t = o.initialize;
 		var types = this.ptype_to_type.get(t);
 
 		if (types) for (var i = 0; i < types.length; i ++) {
@@ -190,8 +191,9 @@ serialization.Polymorphic = serialization.Base.extend({
 		}
 	}
 });
-serialization.Date = serialization.Base.extend({
-	constructor: function() { 
+serialization.Date = new Class({
+	Extends : serialization.Base,
+	initialize: function() { 
 		this.type = "_time";
 	},
 	can_encode : function(o) {
@@ -204,8 +206,9 @@ serialization.Date = serialization.Base.extend({
 		return new serialization.Atom("_time", o.toInt().toString());
 	}
 });
-serialization.Message = serialization.Base.extend({
-	constructor : function(method, vars, data) {
+serialization.Message = new Class({
+	Extends : serialization.Base,
+	initialize : function(method, vars, data) {
 		this.mtype = method;
 		this.vtype = vars;
 		this.dtype = data;
@@ -259,8 +262,9 @@ serialization.Message = serialization.Base.extend({
 		return new serialization.Atom("_message", str);
 	}
 });
-serialization.String = serialization.Base.extend({
-	constructor : function() { 
+serialization.String = new Class({
+	Extends : serialization.Base,
+	initialize : function() { 
 		this.type = "_string";
 	},
 	can_encode : function(o) {
@@ -273,8 +277,9 @@ serialization.String = serialization.Base.extend({
 		return new serialization.Atom("_string", UTF8.encode(o));
 	}
 });
-serialization.Integer = serialization.Base.extend({
-	constructor : function() { 
+serialization.Integer = new Class({
+	Extends : serialization.Base,
+	initialize : function() { 
 		this.type = "_integer";
 	},
 	can_encode : function(o) {
@@ -287,8 +292,9 @@ serialization.Integer = serialization.Base.extend({
 		return new serialization.Atom("_integer", o.toString());
 	}
 });
-serialization.Float = serialization.Base.extend({
-	constructor : function() { 
+serialization.Float = new Class({
+	Extends : serialization.Base,
+	initialize : function() { 
 		this.type = "_float";
 	},
 	can_encode : function(o) {
@@ -301,9 +307,10 @@ serialization.Float = serialization.Base.extend({
 		return new serialization.Atom("_float", o.toString());
 	}
 });
-serialization.Method = serialization.Base.extend({
-	constructor : function(base) { 
-		this.base = base;
+serialization.Method = new Class({
+	Extends : serialization.Base,
+	initialize : function(base) { 
+		this.parent = base;
 		this.type = "_method";
 	},
 	can_encode : function(o) {
@@ -316,8 +323,9 @@ serialization.Method = serialization.Base.extend({
 		return new serialization.Atom("_method", o);
 	}
 });
-serialization.Uniform = serialization.Base.extend({
-	constructor : function() { 
+serialization.Uniform = new Class({
+	Extends : serialization.Base,
+	initialize : function() { 
 		this.type = "_uniform";
 	},
 	can_encode : function(o) {
@@ -330,8 +338,9 @@ serialization.Uniform = serialization.Base.extend({
 		return new serialization.Atom("_uniform", o.uniform);
 	}
 });
-serialization.Mapping = serialization.Base.extend({
-	constructor : function(mtype, vtype) { 
+serialization.Mapping = new Class({
+	Extends : serialization.Base,
+	initialize : function(mtype, vtype) { 
 		this.mtype = mtype;
 		this.vtype = vtype;
 		this.type = "_mapping";
@@ -343,7 +352,7 @@ serialization.Mapping = serialization.Base.extend({
 		return o instanceof Mapping;
 	},
 	can_decode : function(atom) {
-		if (!this.base(atom)) return false;
+		if (!this.parent(atom)) return false;
 
 		var p = new serialization.AtomParser();
 		var l = p.parse(atom.data);
@@ -386,8 +395,9 @@ serialization.Mapping = serialization.Base.extend({
 		return new serialization.Atom("_mapping", str);
 	}
 });
-serialization.OneTypedVars = serialization.Base.extend({
-	constructor : function(type) { 
+serialization.OneTypedVars = new Class({
+	Extends : serialization.Base,
+	initialize : function(type) { 
 		this.vtype = type;
 		this.type = "_vars";
 	},
@@ -425,8 +435,9 @@ serialization.OneTypedVars = serialization.Base.extend({
 		return vars;
 	}
 });
-serialization.Vars = serialization.Base.extend({
-	constructor : function(types) { 
+serialization.Vars = new Class({
+	Extends : serialization.Base,
+	initialize : function(types) { 
 		this.types = types;
 		this.type = "_vars";
 	},
@@ -471,8 +482,9 @@ serialization.Vars = serialization.Base.extend({
 		return vars;
 	}
 });
-serialization.Struct = serialization.Base.extend({
-	constructor : function() {
+serialization.Struct = new Class({
+	Extends : serialization.Base,
+	initialize : function() {
 		this.types = Array.prototype.slice.call(arguments);
 		if (meteor.debug) meteor.debug("arguments "+arguments);
 		if (meteor.debug) meteor.debug("types "+this.types);
@@ -511,12 +523,13 @@ serialization.Struct = serialization.Base.extend({
 		return new serialization.Atom(this.type, d);
 	}
 });
-serialization.Packet = serialization.Struct.extend({
-	constructor : function(dtype) {
+serialization.Packet = new Class({
+	Extends : serialization.Struct,
+	initialize : function(dtype) {
 		this.type = "_mmp";
 		var uniform = new serialization.Uniform();
 		var integer = new serialization.Integer();
-		this.base(dtype, new serialization.Vars({ 
+		this.parent(dtype, new serialization.Vars({ 
 			_timestamp : new serialization.Date(),
 			_source : uniform, 
 			_target : uniform, 
@@ -529,15 +542,16 @@ serialization.Packet = serialization.Struct.extend({
 		return o instanceof mmp.Packet;
 	},
 	encode : function(o) {
-		return this.base([ o.data, o.vars ]);
+		return this.parent([ o.data, o.vars ]);
 	},
 	decode : function(atom) {
-		var l = this.base(atom);
+		var l = this.parent(atom);
 		return new mmp.Packet(l[0], l[1]);
 	}
 });
-serialization.Or = serialization.Base.extend({
-	constructor : function() {
+serialization.Or = new Class({
+	Extends : serialization.Base,
+	initialize : function() {
 		this.types = arguments;
 	},
 	toString : function() {
@@ -577,8 +591,9 @@ serialization.Or = serialization.Base.extend({
 		throw("No type in "+this+" to encode "+o);
 	}
 });
-serialization.Array = serialization.Base.extend({
-	constructor : function(type) { 
+serialization.Array = new Class({
+	Extends : serialization.Base,
+	initialize : function(type) { 
 		this.type = "_list";
 		this.etype = type;
 	},

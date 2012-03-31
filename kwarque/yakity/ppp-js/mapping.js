@@ -203,7 +203,7 @@ function Mapping() {
 	}
 }
 Mapping.prototype = {
-	constructor : Mapping,
+	initialize : Mapping,
 	id_cache : new Object(), // shared cached for all implementations
 	get_new_id : function(o) {
 		// TODO: 6 is just not good

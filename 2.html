@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script type="text/javascript" src="ppp-js/Base.js"></script>
+<script type="text/javascript" src="ppp-js/lambda.js"></script>
+<script type="text/javascript" src="ppp-js/utf8.js"></script>
+<script type="text/javascript" src="ppp-js/util.js"></script>
+<script type="text/javascript" src="ppp-js/mapping.js"></script>
+<script type="text/javascript" src="ppp-js/mmp.js"></script>
+<script type="text/javascript" src="ppp-js/serialization.js"></script>
+<script type="text/javascript" src="ppp-js/critbit.js"></script>
+<script type="text/javascript" src="ppp-js/meteor.js"></script>
+<script type="text/javascript" src="syncdb-js/util.bloom.js"></script>
+<script type="text/javascript" src="syncdb-js/util.int.js"></script>
+<script type="text/javascript" src="syncdb-js/util.sha256.js"></script>
+<script type="text/javascript" src="syncdb-js/SyncDB.js"></script>
+<script type="text/javascript">
+    var schema = <schema name="one"/>;
+    var con = new meteor.Connection("/dbmeteor/", {});
+    var mplex = new meteor.Multiplexer(con);
+    var chan = mplex.get_channel(<channel name="one"/>);
+    var db = new SyncDB.MeteorTable("one", schema, chan);
+    con.init();
+</script>
+</head>
+<body>
+</body>
+</html>

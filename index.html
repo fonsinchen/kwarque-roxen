@@ -43,6 +43,12 @@
 			#YakityChat div.chatwindow {
 				border:none;
 			}
+			div div._message .data {
+				color:white;
+			}
+			div div.messages {
+				background-color:black;
+			}
 		</style>
 		<link rel="stylesheet" type="text/css" href="yakity/screen.css"/>
 		
@@ -73,12 +79,12 @@
 		<script src="chat.js" type="text/javascript"></script>
 
 		<script type="text/javascript">
-    		/*var schema = <schema name="one"/>;
+    		var schema = <schema name="one"/>;
     		var con = new meteor.Connection("/dbmeteor/", {});
     		var mplex = new meteor.Multiplexer(con);
     		var chan = mplex.get_channel(<channel name="one"/>);
     		var db = new SyncDB.MeteorTable("one", schema, chan);
-    		con.init();*/
+    		con.init();
 		</script>
 		<script type="text/javascript">
 			function initsite() {

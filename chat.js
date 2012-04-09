@@ -4,7 +4,6 @@ var chat;
 var profiles;
 
 function onconnect(success, uh) {
-	client.onconnect = null;
 	if (!success) {
 		/* give an error message*/
 		return;
@@ -53,11 +52,10 @@ function onconnect(success, uh) {
 	});
 	profiles = new Yakity.ProfileData(client);
 
-	var CustomChat = new Class({
-		Extends : AccChat,
+	var CustomChat = AccChat.extend({
 		createWindow : function(uniform) {
 			if (client.name === uniform.name) return null;
-			var win = this.parent(uniform);
+			var win = this.base(uniform);
 			if (uniform.is_room()) {
 				win.renderMember = function(uniform) {
 					return ulink(uniform);
@@ -97,14 +95,18 @@ function onconnect(success, uh) {
 	});
 	chat = new CustomChat(client, templates, "YakityChat", document.chat_input.text);
 	chat.idle = new Yakity.Presence.Typing(client, chat);
-	chat.enterRoom(mmp.get_uniform("psyc://nowhere/@default"), true);
+	chat.enterRoom(mmp.get_uniform("psyc://7773/@default"), true);
 }
 
 function initchat(meteorUrl) {
 	if (client) return false;
 
-	client = new Yakity.Client(meteorUrl, "jane doe" + Math.floor((Math.random()*1000)+1));
-	client.onconnect = onconnect;
+	var name = "jane doe" + Math.floor((Math.random()*1000)+1);
+	client = new Yakity.Client(meteorUrl, name);
+	client.registerEvent("link", onconnect);
+	client.registerEvent("connect", function() {
+		client.link(name);
+	});
 
 
 	window.onunload = function() {

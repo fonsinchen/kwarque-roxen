@@ -17,8 +17,10 @@ function onconnect(success, uh) {
 		a.appendChild(profiles.getDisplayNode(uniform));
 		a.onclick = function() {
 			var win = chat.getWindow(uniform);
-			chat.active = win;
-			chat.accordion.display(win.pos);
+			if (win) {
+				chat.active = win;
+				chat.accordion.display(win.pos);
+			}
 		};
 
 		return a;
@@ -54,7 +56,7 @@ function onconnect(success, uh) {
 
 	var CustomChat = AccChat.extend({
 		createWindow : function(uniform) {
-			if (client.name === uniform.name) return null;
+			//if (client.name === uniform.name) return null;
 			var win = this.base(uniform);
 			if (uniform.is_room()) {
 				win.renderMember = function(uniform) {
@@ -95,7 +97,7 @@ function onconnect(success, uh) {
 	});
 	chat = new CustomChat(client, templates, "YakityChat", document.chat_input.text);
 	chat.idle = new Yakity.Presence.Typing(client, chat);
-	chat.enterRoom(mmp.get_uniform("psyc://7773/@default"), true);
+	chat.enterRoom(mmp.get_uniform("psyc://localhost:7773/@default"), true);
 }
 
 function initchat(meteorUrl) {
